@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <main>
       <h1>Hello</h1>
-      <p>What's in your fridge?</p>
+      <p>What's in your fridge and pantry?</p>
 
       <div>
         <input
@@ -77,7 +77,7 @@ export default function Home() {
 
       {items.length === 0 && (
         <p>
-          No items yet. Add something to your fridge!
+          No items yet. Add something from your fridge and/or pantry!
         </p>
       )}
 
