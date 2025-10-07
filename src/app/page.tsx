@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 
 const STORAGE_KEY = "fridge-items";
+const API_KEY_STORAGE_KEY = "groq-api-key";
 
 export default function Home() {
   const [items, setItems] = useState<string[]>([]);
@@ -11,6 +12,9 @@ export default function Home() {
   const [recipes, setRecipes] = useState("");
   const [loading, setLoading] = useState(false);
   const [userRequirements, setUserRequirements] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [tempApiKey, setTempApiKey] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -20,6 +24,11 @@ export default function Home() {
       } catch (e) {
         console.error("Failed to parse stored items:", e);
       }
+    }
+
+    const storedApiKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
     }
   }, []);
 
@@ -38,8 +47,30 @@ export default function Home() {
     setItems(items.filter((_, i) => i !== index));
   };
 
+  const openSettings = () => {
+    setTempApiKey(apiKey);
+    setShowSettings(true);
+  };
+
+  const closeSettings = () => {
+    setShowSettings(false);
+    setTempApiKey("");
+  };
+
+  const saveSettings = () => {
+    setApiKey(tempApiKey);
+    localStorage.setItem(API_KEY_STORAGE_KEY, tempApiKey);
+    setShowSettings(false);
+    setTempApiKey("");
+  };
+
   const getRecipes = async () => {
     if (items.length === 0) return;
+    
+    if (!apiKey) {
+      setRecipes("Please set your Groq API key in settings (⚙️ icon)");
+      return;
+    }
     
     setLoading(true);
     try {
@@ -47,6 +78,7 @@ export default function Home() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-API-Key": apiKey,
         },
         body: JSON.stringify({ items, requirements: userRequirements }),
       });
@@ -65,11 +97,49 @@ export default function Home() {
   };
 
   return (
-    <main className={styles.main}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>🍳 Fridge Recipes</h1>
-        <p className={styles.subtitle}>What's in your fridge and pantry?</p>
-      </div>
+    <>
+      <button onClick={openSettings} className={styles.settingsButton} title="Settings">
+        ⚙️
+      </button>
+
+      {showSettings && (
+        <div className={styles.modal} onClick={closeSettings}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Settings</h2>
+              <button onClick={closeSettings} className={styles.closeButton}>×</button>
+            </div>
+            <div className={styles.modalBody}>
+              <label className={styles.modalLabel}>
+                Groq API Key
+                <input
+                  type="password"
+                  value={tempApiKey}
+                  onChange={(e) => setTempApiKey(e.target.value)}
+                  placeholder="gsk_..."
+                  className={styles.modalInput}
+                />
+              </label>
+              <p className={styles.helpText}>
+                Get your free API key from{" "}
+                <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className={styles.helpLink}>
+                  Groq Console
+                </a>
+              </p>
+            </div>
+            <div className={styles.modalFooter}>
+              <button onClick={closeSettings} className={styles.cancelButton}>Cancel</button>
+              <button onClick={saveSettings} className={styles.saveButton}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <main className={styles.main}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>🍳 Fridge Recipes</h1>
+          <p className={styles.subtitle}>What's in your fridge and pantry?</p>
+        </div>
 
       <div className={styles.inputContainer}>
         <input
@@ -128,6 +198,7 @@ export default function Home() {
           <pre className={styles.recipesContent}>{recipes}</pre>
         </div>
       )}
-    </main>
+      </main>
+    </>
   );
 }

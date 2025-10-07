@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
+    const apiKey = request.headers.get("X-API-Key") || process.env.GROQ_API_KEY;
+    
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "API key not provided" },
+        { status: 401 }
+      );
+    }
+
+    const groq = new Groq({
+      apiKey: apiKey,
+    });
+
     const { items, requirements } = await request.json();
 
     if (!items || items.length === 0) {
