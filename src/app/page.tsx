@@ -5,6 +5,8 @@ import { useState } from "react";
 export default function Home() {
   const [items, setItems] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [recipes, setRecipes] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const addItem = () => {
     if (inputValue.trim()) {
@@ -17,39 +19,55 @@ export default function Home() {
     setItems(items.filter((_, i) => i !== index));
   };
 
-  return (
-    <main className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Hello</h1>
-      <p className="text-gray-600 mb-6">What's in your fridge?</p>
+  const getRecipes = async () => {
+    if (items.length === 0) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch("/api/recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items }),
+      });
 
-      <div className="mb-4 flex gap-2">
+      const data = await response.json();
+      if (response.ok) {
+        setRecipes(data.recipes);
+      } else {
+        setRecipes("Error getting recipes: " + data.error);
+      }
+    } catch (error) {
+      setRecipes("Error getting recipes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main>
+      <h1>Hello</h1>
+      <p>What's in your fridge?</p>
+
+      <div>
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && addItem()}
           placeholder="Add an item..."
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button
-          onClick={addItem}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
+        <button onClick={addItem}>
           Add
         </button>
       </div>
 
-      <ul className="space-y-2">
+      <ul>
         {items.map((item, index) => (
-          <li
-            key={index}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-          >
+          <li key={index}>
             <span>{item}</span>
-            <button
-              onClick={() => removeItem(index)}
-              className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
-            >
+            <button onClick={() => removeItem(index)}>
               Remove
             </button>
           </li>
@@ -57,9 +75,24 @@ export default function Home() {
       </ul>
 
       {items.length === 0 && (
-        <p className="text-gray-400 text-center mt-8">
+        <p>
           No items yet. Add something to your fridge!
         </p>
+      )}
+
+      {items.length > 0 && (
+        <div>
+          <button onClick={getRecipes} disabled={loading}>
+            {loading ? "Getting recipes..." : "What can I make?"}
+          </button>
+        </div>
+      )}
+
+      {recipes && (
+        <div>
+          <h2>Recipe Ideas:</h2>
+          <pre style={{ whiteSpace: "pre-wrap" }}>{recipes}</pre>
+        </div>
       )}
     </main>
   );
