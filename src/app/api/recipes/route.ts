@@ -7,7 +7,7 @@ const groq = new Groq({
 
 export async function POST(request: Request) {
   try {
-    const { items } = await request.json();
+    const { items, requirements } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json(
@@ -16,11 +16,17 @@ export async function POST(request: Request) {
       );
     }
 
+    let prompt = `I have the following ingredients: ${items.join(", ")}. Suggest 3 simple recipes I can make with these ingredients. For each recipe, provide the name and a brief description. Format your response as a list.`;
+    
+    if (requirements && requirements.trim()) {
+      prompt += ` Additional requirements: ${requirements}`;
+    }
+
     const completion = await groq.chat.completions.create({
       messages: [
         {
           role: "user",
-          content: `I have the following ingredients: ${items.join(", ")}. Suggest 3 simple recipes I can make with these ingredients. For each recipe, provide the name and a brief description. Format your response as a list.`,
+          content: prompt,
         },
       ],
       model: "llama-3.3-70b-versatile",

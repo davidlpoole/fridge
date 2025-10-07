@@ -7,6 +7,7 @@ export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [recipes, setRecipes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [userRequirements, setUserRequirements] = useState("");
 
   const addItem = () => {
     if (inputValue.trim()) {
@@ -29,7 +30,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, requirements: userRequirements }),
       });
 
       const data = await response.json();
@@ -82,6 +83,17 @@ export default function Home() {
 
       {items.length > 0 && (
         <div>
+          <div>
+            <label>
+              Dietary requirements or preferences (optional):
+              <textarea
+                value={userRequirements}
+                onChange={(e) => setUserRequirements(e.target.value)}
+                placeholder="E.g., vegetarian, gluten-free, quick meals, etc."
+                rows={3}
+              />
+            </label>
+          </div>
           <button onClick={getRecipes} disabled={loading}>
             {loading ? "Getting recipes..." : "What can I make?"}
           </button>
