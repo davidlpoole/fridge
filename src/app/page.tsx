@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import styles from "./page.module.css";
 
 export default function Home() {
   const [items, setItems] = useState<string[]>([]);
@@ -47,28 +48,31 @@ export default function Home() {
   };
 
   return (
-    <main>
-      <h1>Hello</h1>
-      <p>What's in your fridge and pantry?</p>
+    <main className={styles.main}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>🍳 Fridge Recipes</h1>
+        <p className={styles.subtitle}>What's in your fridge and pantry?</p>
+      </div>
 
-      <div>
+      <div className={styles.inputContainer}>
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && addItem()}
           placeholder="Add an item..."
+          className={styles.input}
         />
-        <button onClick={addItem}>
+        <button onClick={addItem} className={styles.button}>
           Add
         </button>
       </div>
 
-      <ul>
+      <ul className={styles.itemList}>
         {items.map((item, index) => (
-          <li key={index}>
-            <span>{item}</span>
-            <button onClick={() => removeItem(index)}>
+          <li key={index} className={styles.item}>
+            <span className={styles.itemText}>{item}</span>
+            <button onClick={() => removeItem(index)} className={styles.removeButton}>
               Remove
             </button>
           </li>
@@ -76,34 +80,35 @@ export default function Home() {
       </ul>
 
       {items.length === 0 && (
-        <p>
+        <p className={styles.emptyState}>
           No items yet. Add something from your fridge and/or pantry!
         </p>
       )}
 
       {items.length > 0 && (
         <div>
-          <div>
-            <label>
+          <div className={styles.requirementsSection}>
+            <label className={styles.label}>
               Dietary requirements or preferences (optional):
               <textarea
                 value={userRequirements}
                 onChange={(e) => setUserRequirements(e.target.value)}
                 placeholder="E.g., vegetarian, gluten-free, quick meals, etc."
                 rows={3}
+                className={styles.textarea}
               />
             </label>
           </div>
-          <button onClick={getRecipes} disabled={loading}>
+          <button onClick={getRecipes} disabled={loading} className={styles.recipeButton}>
             {loading ? "Getting recipes..." : "What can I make?"}
           </button>
         </div>
       )}
 
       {recipes && (
-        <div>
-          <h2>Recipe Ideas:</h2>
-          <pre style={{ whiteSpace: "pre-wrap" }}>{recipes}</pre>
+        <div className={styles.recipesContainer}>
+          <h2 className={styles.recipesTitle}>Recipe Ideas:</h2>
+          <pre className={styles.recipesContent}>{recipes}</pre>
         </div>
       )}
     </main>
