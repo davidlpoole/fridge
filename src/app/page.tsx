@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./page.module.css";
+
+const STORAGE_KEY = "fridge-items";
 
 export default function Home() {
   const [items, setItems] = useState<string[]>([]);
@@ -9,6 +11,21 @@ export default function Home() {
   const [recipes, setRecipes] = useState("");
   const [loading, setLoading] = useState(false);
   const [userRequirements, setUserRequirements] = useState("");
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        setItems(JSON.parse(stored));
+      } catch (e) {
+        console.error("Failed to parse stored items:", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
   const addItem = () => {
     if (inputValue.trim()) {
