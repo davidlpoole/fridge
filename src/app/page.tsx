@@ -16,6 +16,8 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [tempApiKey, setTempApiKey] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -55,6 +57,26 @@ export default function Home() {
 
   const removeItem = (index: number) => {
     setItems(items.filter((_, i) => i !== index));
+  };
+
+  const startEditing = (index: number) => {
+    setEditingIndex(index);
+    setEditingValue(items[index]);
+  };
+
+  const saveEdit = () => {
+    if (editingIndex !== null && editingValue.trim()) {
+      const newItems = [...items];
+      newItems[editingIndex] = editingValue.trim();
+      setItems(newItems);
+    }
+    setEditingIndex(null);
+    setEditingValue("");
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditingValue("");
   };
 
   const openSettings = () => {
@@ -168,10 +190,37 @@ export default function Home() {
       <ul className={styles.itemList}>
         {items.map((item, index) => (
           <li key={index} className={styles.item}>
-            <span className={styles.itemText}>{item}</span>
-            <button onClick={() => removeItem(index)} className={styles.removeButton}>
-              Remove
-            </button>
+            {editingIndex === index ? (
+              <>
+                <input
+                  type="text"
+                  value={editingValue}
+                  onChange={(e) => setEditingValue(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") saveEdit();
+                    if (e.key === "Escape") cancelEdit();
+                  }}
+                  onBlur={saveEdit}
+                  className={styles.input}
+                  autoFocus
+                />
+                <button onClick={saveEdit} className={styles.button}>
+                  Save
+                </button>
+                <button onClick={cancelEdit} className={styles.removeButton}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <span className={styles.itemText} onClick={() => startEditing(index)} style={{ cursor: "pointer" }}>
+                  {item}
+                </span>
+                <button onClick={() => removeItem(index)} className={styles.removeButton}>
+                  Remove
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ul>
