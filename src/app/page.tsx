@@ -204,7 +204,7 @@ export default function Home() {
                   className={styles.input}
                   autoFocus
                 />
-                <button onClick={saveEdit} className={styles.button}>
+                <button onClick={saveEdit} className={styles.editButton}>
                   Save
                 </button>
                 <button onClick={cancelEdit} className={styles.removeButton}>
