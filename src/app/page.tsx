@@ -54,25 +54,61 @@ export default function Home() {
     }
     
     setLoading(true);
+    setRecipes(""); // Clear previous recipes
+    
     try {
       const response = await fetch("/api/recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "text/event-stream",
           "X-API-Key": apiKey,
         },
         body: JSON.stringify({ items, requirements: userRequirements }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        setRecipes(data.recipes);
-      } else {
-        setRecipes("Error getting recipes: " + data.error);
+      if (!response.ok) {
+        const data = await response.json();
+        setRecipes(`Error: ${data.error}${data.details ? ` - ${data.details}` : ""}`);
+        setLoading(false);
+        return;
       }
-    } catch {
-      setRecipes("Error getting recipes");
-    } finally {
+
+      // Check if response is streaming
+      const contentType = response.headers.get("content-type");
+      if (contentType?.includes("text/event-stream")) {
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        
+        if (!reader) {
+          setRecipes("Error: Unable to read streaming response");
+          setLoading(false);
+          return;
+        }
+
+        let accumulatedText = "";
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          
+          if (done) {
+            setLoading(false);
+            break;
+          }
+          
+          const chunk = decoder.decode(value, { stream: true });
+          accumulatedText += chunk;
+          setRecipes(accumulatedText);
+        }
+      } else {
+        // Handle non-streaming response
+        const data = await response.json();
+        setRecipes(data.recipes);
+        setLoading(false);
+      }
+    } catch (error) {
+      setRecipes("Error getting recipes: " + (error instanceof Error ? error.message : "Unknown error"));
       setLoading(false);
     }
   };
