@@ -182,7 +182,7 @@ export default function Home() {
         </p>
       )}
 
-      {(items.length > 0 || userRequirements) && (
+      {(
         <div>
           <div className={styles.requirementsSection}>
             <label className={styles.label}>
