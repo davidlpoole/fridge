@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 
 const STORAGE_KEY = "fridge-items";
 const API_KEY_STORAGE_KEY = "groq-api-key";
+const REQUIREMENTS_STORAGE_KEY = "user-requirements";
 
 export default function Home() {
   const [items, setItems] = useState<string[]>([]);
@@ -30,11 +31,20 @@ export default function Home() {
     if (storedApiKey) {
       setApiKey(storedApiKey);
     }
+
+    const storedRequirements = localStorage.getItem(REQUIREMENTS_STORAGE_KEY);
+    if (storedRequirements) {
+      setUserRequirements(storedRequirements);
+    }
   }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
+
+  useEffect(() => {
+    localStorage.setItem(REQUIREMENTS_STORAGE_KEY, userRequirements);
+  }, [userRequirements]);
 
   const addItem = () => {
     if (inputValue.trim()) {
@@ -138,7 +148,7 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.header}>
           <h1 className={styles.title}>🍳 Fridge Recipes</h1>
-          <p className={styles.subtitle}>What's in your fridge and pantry?</p>
+          <p className={styles.subtitle}>What&apos;s in your fridge and pantry?</p>
         </div>
 
       <div className={styles.inputContainer}>
@@ -172,7 +182,7 @@ export default function Home() {
         </p>
       )}
 
-      {items.length > 0 && (
+      {(items.length > 0 || userRequirements) && (
         <div>
           <div className={styles.requirementsSection}>
             <label className={styles.label}>
