@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Dinosaur App",
-  description: "Run Next.js with Deno",
+  title: "Fridge Recipes - What Can I Make?",
+  description: "Enter ingredients from your fridge and pantry to discover delicious recipe ideas powered by AI.",
 };
 
 export default function RootLayout({
@@ -14,7 +14,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="stylesheet" href="https://demo-styles.deno.deno.net/styles.css" />
       </head>
       <body>
         {children}
