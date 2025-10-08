@@ -120,7 +120,7 @@ export default function Home() {
       } else {
         setRecipes("Error getting recipes: " + data.error);
       }
-    } catch (error) {
+    } catch {
       setRecipes("Error getting recipes");
     } finally {
       setLoading(false);
