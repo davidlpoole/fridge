@@ -11,7 +11,7 @@ import RecipeForm from "@/components/RecipeForm";
 import RecipeDisplay from "@/components/RecipeDisplay";
 
 export default function Home() {
-  const [items, setItems] = useLocalStorage<string[]>(STORAGE_KEY, []);
+  const [items, setItems, itemsLoading] = useLocalStorage<string[]>(STORAGE_KEY, []);
   const [apiKey, setApiKey] = useLocalStorage<string>(API_KEY_STORAGE_KEY, "");
   const [userRequirements, setUserRequirements] = useLocalStorage<string>(REQUIREMENTS_STORAGE_KEY, "");
   const [recipes, setRecipes] = useState("");
@@ -133,6 +133,7 @@ export default function Home() {
           items={items}
           onRemove={removeItem}
           onEdit={editItem}
+          isLoading={itemsLoading}
         />
         <RecipeForm 
           userRequirements={userRequirements}

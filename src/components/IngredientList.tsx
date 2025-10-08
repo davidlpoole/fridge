@@ -4,9 +4,19 @@ interface IngredientListProps {
   items: string[];
   onRemove: (index: number) => void;
   onEdit: (index: number, newValue: string) => void;
+  isLoading?: boolean;
 }
 
-export default function IngredientList({ items, onRemove, onEdit }: IngredientListProps) {
+function ShimmerItem() {
+  return (
+    <li className="flex justify-between items-center p-4 mb-2 bg-white rounded-lg shadow-sm animate-pulse">
+      <div className="flex-1 h-6 bg-gray-200 rounded"></div>
+      <div className="w-20 h-9 bg-gray-200 rounded ml-4"></div>
+    </li>
+  );
+}
+
+export default function IngredientList({ items, onRemove, onEdit, isLoading = false }: IngredientListProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState("");
 
@@ -27,6 +37,16 @@ export default function IngredientList({ items, onRemove, onEdit }: IngredientLi
     setEditingIndex(null);
     setEditingValue("");
   };
+
+  if (isLoading) {
+    return (
+      <ul className="list-none p-0 mb-6">
+        <ShimmerItem />
+        <ShimmerItem />
+        <ShimmerItem />
+      </ul>
+    );
+  }
 
   if (items.length === 0) {
     return (

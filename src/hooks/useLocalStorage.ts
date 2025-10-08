@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -11,6 +12,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
     } catch (error) {
       console.error(`Error loading ${key} from localStorage:`, error);
+    } finally {
+      setIsLoading(false);
     }
   }, [key]);
 
@@ -24,5 +27,5 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     }
   };
 
-  return [storedValue, setValue] as const;
+  return [storedValue, setValue, isLoading] as const;
 }
