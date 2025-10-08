@@ -1,8 +1,13 @@
-a.btn-primary {
-  display: inline-block;
-  margin: 0.5rem;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream-100 text-gray-800;
+  }
 }
 
-a.btn-secondary::before {
-  content: "← ";
+@layer components {
+  /* Custom components can be added here if needed */
 }
