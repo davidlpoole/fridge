@@ -1,44 +1,86 @@
-# Next.js with Deno Tutorial
+# 🍳 Fridge Recipes
 
-This project demonstrates how to run a [Next.js](https://nextjs.org) application using [Deno](https://deno.com). It's a complete tutorial example showing how to set up, develop, and deploy a Next.js app in the Deno runtime environment.
+A Next.js application that helps you discover recipes based on ingredients you have in your fridge and pantry. Powered by Groq's AI to generate creative recipe suggestions tailored to your available ingredients and dietary requirements.
 
-## Make it your own!
+## Features
 
-You can deploy your own version of this Next.js app to Deno Deploy immediately.
-Just click the button to clone and deploy.
-
-[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/denoland/tutorial-with-next)
-
-## About This Tutorial
-
-This tutorial project shows you how to:
-
-- Set up a Next.js project
-- Run your project on Deno
-- Add a simple backend API route
-- Update the frontend to fetch data from the backend
-- Deploy your Next.js app to Deno Deploy
-
-For the complete step-by-step of this tutorial, visit: [**Next.js Tutorial on Deno Docs**](https://docs.deno.com/examples/next_tutorial/)
+- **Ingredient Management**: Add, edit, and remove ingredients with an intuitive interface
+- **AI-Powered Recipes**: Get recipe suggestions using Groq's LLaMA 3.3 70B model
+- **Custom Requirements**: Specify dietary restrictions, cuisine preferences, or other requirements
+- **Persistent Storage**: Your ingredients and settings are saved locally in your browser
+- **Clean Architecture**: Well-organized component structure for maintainability and reusability
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Deno](https://deno.com) runtime installed
+- A [Groq API key](https://console.groq.com/keys) (free tier available)
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+### Configuration
+
+1. Click the settings icon (⚙️) in the top-right corner
+2. Enter your Groq API key
+3. Click "Save"
+
+Your API key is stored locally in your browser and is used for all recipe generation requests.
+
+### Development
+
+Run the development server:
 
 ```bash
 deno run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
+
+Build the application for production:
+
+```bash
+npm run build
+npm run start
+```
+
+## How It Works
+
+1. **Add Ingredients**: Enter items from your fridge and pantry
+2. **Set Requirements** (optional): Specify dietary needs, cuisine type, cooking time, etc.
+3. **Generate Recipes**: Click "Get Recipes" to receive AI-generated suggestions
+4. **Get Inspired**: View 3 simple recipe ideas with descriptions
+
+## Technology Stack
+
+- **Framework**: Next.js 15 with React 19
+- **Runtime**: Deno
+- **Styling**: Tailwind CSS
+- **AI Provider**: Groq (LLaMA 3.3 70B Versatile)
+- **Language**: TypeScript
+
+## Project Structure
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed information about the component architecture and design patterns used in this project.
 
 ## Deploy on Deno
 
-You can deploy this project on Deno Deploy! To get started, follow these steps:
+Deploy this application to Deno Deploy:
 
-1. Go to the [Deno Deploy dashboard](https://app.deno.com/).
-2. Click on "New Project".
-3. Select your GitHub repository.
-4. Follow the prompts to deploy your Next.js application.
-5. Once deployed, you will receive a URL where your application is live.
+1. Go to the [Deno Deploy dashboard](https://app.deno.com/)
+2. Click "New Project"
+3. Connect your GitHub repository
+4. Deploy!
+
+## License
+
+This project is open source and available under the MIT License.
