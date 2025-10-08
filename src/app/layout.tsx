@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fridge Recipes - AI-Powered Recipe Ideas",
+  title: "What To Cook: AI-Powered Recipe Ideas",
   description: "Transform ingredients from your fridge and pantry into delicious recipes. Get AI-powered recipe suggestions tailored to what you have on hand.",
 };
 
