@@ -72,6 +72,18 @@ npm run start
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed information about the component architecture and design patterns used in this project.
 
+## API Documentation
+
+For developers integrating with the API or wanting to understand the API capabilities:
+
+- See [API.md](./API.md) for comprehensive API documentation including:
+  - Authentication and rate limiting
+  - Request/response formats
+  - Error handling and codes
+  - Validation rules
+  - Security features
+  - Code examples
+
 ## Deploy on Deno
 
 Deploy this application to Deno Deploy:
