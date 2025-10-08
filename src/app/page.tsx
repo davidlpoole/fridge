@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "./page.module.css";
 
 const STORAGE_KEY = "fridge-items";
 const API_KEY_STORAGE_KEY = "groq-api-key";
@@ -130,66 +129,88 @@ export default function Home() {
 
   return (
     <>
-      <button onClick={openSettings} className={styles.settingsButton} title="Settings">
+      <button 
+        onClick={openSettings} 
+        className="fixed top-4 right-4 p-3 bg-olive-600 hover:bg-olive-700 text-white border-none rounded-full w-12 h-12 cursor-pointer text-xl transition-colors flex items-center justify-center shadow-lg z-50" 
+        title="Settings"
+      >
         ⚙️
       </button>
 
       {showSettings && (
-        <div className={styles.modal} onClick={closeSettings}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>Settings</h2>
-              <button onClick={closeSettings} className={styles.closeButton}>×</button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]" onClick={closeSettings}>
+          <div className="bg-white p-8 rounded-2xl max-w-md w-11/12 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold text-gray-800 m-0">Settings</h2>
+              <button 
+                onClick={closeSettings} 
+                className="bg-transparent border-none text-2xl cursor-pointer text-gray-500 hover:text-gray-800 p-0 w-8 h-8 flex items-center justify-center transition-colors"
+              >
+                ×
+              </button>
             </div>
-            <div className={styles.modalBody}>
-              <label className={styles.modalLabel}>
+            <div className="mb-6">
+              <label className="block font-medium mb-2 text-gray-800">
                 Groq API Key
                 <input
                   type="password"
                   value={tempApiKey}
                   onChange={(e) => setTempApiKey(e.target.value)}
                   placeholder="gsk_..."
-                  className={styles.modalInput}
+                  className="w-full p-3 text-base border-2 border-gray-300 rounded-lg font-mono outline-none transition-colors focus:border-sage-500 box-border mt-2"
                 />
               </label>
-              <p className={styles.helpText}>
+              <p className="text-sm text-gray-600 mt-2">
                 Get your free API key from{" "}
-                <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className={styles.helpLink}>
+                <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="text-terracotta-500 hover:underline">
                   Groq Console
                 </a>
               </p>
             </div>
-            <div className={styles.modalFooter}>
-              <button onClick={closeSettings} className={styles.cancelButton}>Cancel</button>
-              <button onClick={saveSettings} className={styles.saveButton}>Save</button>
+            <div className="flex gap-2 justify-end">
+              <button 
+                onClick={closeSettings} 
+                className="px-6 py-3 text-base bg-gray-300 hover:bg-gray-400 text-gray-800 border-none rounded-lg cursor-pointer transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={saveSettings} 
+                className="px-6 py-3 text-base bg-sage-500 hover:bg-sage-600 text-white border-none rounded-lg cursor-pointer transition-colors font-medium"
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      <main className={styles.main}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>🍳 Fridge Recipes</h1>
-          <p className={styles.subtitle}>What&apos;s in your fridge and pantry?</p>
+      <main className="max-w-3xl mx-auto px-6 py-8 font-sans">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-terracotta-600 mb-2 drop-shadow-sm">🍳 Fridge Recipes</h1>
+          <p className="text-xl text-gray-600 font-light">What&apos;s in your fridge and pantry?</p>
         </div>
 
-      <div className={styles.inputContainer}>
+      <div className="flex gap-2 mb-6">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && addItem()}
           placeholder="Add an item..."
-          className={styles.input}
+          className="flex-1 p-3 text-base border-2 border-gray-300 rounded-lg outline-none transition-colors focus:border-sage-500 focus:ring-2 focus:ring-sage-200"
         />
-        <button onClick={addItem} className={styles.button}>
+        <button 
+          onClick={addItem} 
+          className="px-6 py-3 text-base bg-sage-500 hover:bg-sage-600 text-white border-none rounded-lg cursor-pointer transition-colors font-medium shadow-sm"
+        >
           Add
         </button>
       </div>
 
-      <ul className={styles.itemList}>
+      <ul className="list-none p-0 mb-6">
         {items.map((item, index) => (
-          <li key={index} className={styles.item}>
+          <li key={index} className="flex justify-between items-center p-4 mb-2 bg-white rounded-lg transition-all hover:bg-cream-200 shadow-sm">
             {editingIndex === index ? (
               <>
                 <input
@@ -201,22 +222,34 @@ export default function Home() {
                     if (e.key === "Escape") cancelEdit();
                   }}
                   onBlur={saveEdit}
-                  className={styles.editInput}
+                  className="flex-1 p-2 px-3 text-base border-2 border-gray-300 rounded-lg outline-none transition-colors focus:border-sage-500 mr-2"
                   autoFocus
                 />
-                <button onClick={saveEdit} className={styles.editButton}>
+                <button 
+                  onClick={saveEdit} 
+                  className="px-4 py-2 text-sm bg-sage-500 hover:bg-sage-600 text-white border-none rounded-md cursor-pointer transition-colors"
+                >
                   Save
                 </button>
-                <button onClick={cancelEdit} className={styles.removeButton}>
+                <button 
+                  onClick={cancelEdit} 
+                  className="px-4 py-2 text-sm bg-terracotta-500 hover:bg-terracotta-600 text-white border-none rounded-md cursor-pointer transition-colors ml-2"
+                >
                   Cancel
                 </button>
               </>
             ) : (
               <>
-                <span className={styles.itemText} onClick={() => startEditing(index)} style={{ cursor: "pointer" }}>
+                <span 
+                  className="flex-1 text-base text-gray-800 cursor-pointer" 
+                  onClick={() => startEditing(index)}
+                >
                   {item}
                 </span>
-                <button onClick={() => removeItem(index)} className={styles.removeButton}>
+                <button 
+                  onClick={() => removeItem(index)} 
+                  className="px-4 py-2 text-sm bg-terracotta-500 hover:bg-terracotta-600 text-white border-none rounded-md cursor-pointer transition-colors"
+                >
                   Remove
                 </button>
               </>
@@ -226,35 +259,39 @@ export default function Home() {
       </ul>
 
       {items.length === 0 && (
-        <p className={styles.emptyState}>
+        <p className="text-center text-gray-500 py-8 italic bg-cream-200 rounded-lg">
           No items yet. Add something from your fridge and/or pantry!
         </p>
       )}
 
       {(
         <div>
-          <div className={styles.requirementsSection}>
-            <label className={styles.label}>
+          <div className="bg-cream-300 p-6 rounded-xl mb-4 shadow-sm border border-cream-400">
+            <label className="block font-medium mb-3 text-gray-800">
               Dietary requirements or preferences (optional):
               <textarea
                 value={userRequirements}
                 onChange={(e) => setUserRequirements(e.target.value)}
                 placeholder="E.g., vegetarian, gluten-free, quick meals, etc."
                 rows={3}
-                className={styles.textarea}
+                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg resize-vertical font-sans outline-none transition-colors focus:border-sage-500 focus:ring-2 focus:ring-sage-200 box-border mt-2"
               />
             </label>
           </div>
-          <button onClick={getRecipes} disabled={loading} className={styles.recipeButton}>
+          <button 
+            onClick={getRecipes} 
+            disabled={loading} 
+            className="w-full p-4 text-lg bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white border-none rounded-xl cursor-pointer transition-colors font-semibold mt-2 shadow-md hover:shadow-lg"
+          >
             {loading ? "Getting recipes..." : "What can I make?"}
           </button>
         </div>
       )}
 
       {recipes && (
-        <div className={styles.recipesContainer}>
-          <h2 className={styles.recipesTitle}>Recipe Ideas:</h2>
-          <pre className={styles.recipesContent}>{recipes}</pre>
+        <div className="mt-8 p-6 bg-white border-2 border-sage-400 rounded-xl shadow-md">
+          <h2 className="text-3xl font-bold text-terracotta-600 mb-4">Recipe Ideas:</h2>
+          <pre className="whitespace-pre-wrap leading-relaxed text-gray-700 text-base font-sans">{recipes}</pre>
         </div>
       )}
       </main>
