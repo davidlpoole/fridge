@@ -201,7 +201,7 @@ export default function Home() {
                     if (e.key === "Escape") cancelEdit();
                   }}
                   onBlur={saveEdit}
-                  className={styles.input}
+                  className={styles.editInput}
                   autoFocus
                 />
                 <button onClick={saveEdit} className={styles.editButton}>
