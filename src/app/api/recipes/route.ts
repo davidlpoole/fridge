@@ -18,12 +18,13 @@ export const config = {
 export async function POST(request: Request) {
   try {
     // 1. Rate Limiting
-    const clientIp = request.headers.get("x-forwarded-for") || 
-                     request.headers.get("x-real-ip") || 
-                     "unknown";
-    
+    const clientIp =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+
     const rateLimit = checkRateLimit(clientIp, 10, 60000); // 10 requests per minute
-    
+
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
@@ -37,7 +38,9 @@ export async function POST(request: Request) {
             "X-RateLimit-Limit": rateLimit.limit.toString(),
             "X-RateLimit-Remaining": rateLimit.remaining.toString(),
             "X-RateLimit-Reset": new Date(rateLimit.reset).toISOString(),
-            "Retry-After": Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+            "Retry-After": Math.ceil(
+              (rateLimit.reset - Date.now()) / 1000
+            ).toString(),
           },
         }
       );
@@ -45,7 +48,7 @@ export async function POST(request: Request) {
 
     // 2. API Key Validation
     const apiKey = request.headers.get("X-API-Key") || process.env.GROQ_API_KEY;
-    
+
     if (!apiKey) {
       return createErrorResponse(
         "API key not provided",
@@ -75,11 +78,21 @@ export async function POST(request: Request) {
         "Invalid request data",
         400,
         ErrorCode.VALIDATION_ERROR,
-        firstError ? `${firstError.path.join(".")}: ${firstError.message}` : "Validation failed"
+        firstError
+          ? `${firstError.path.join(".")}: ${firstError.message}`
+          : "Validation failed"
       );
     }
 
-    const { items, requirements } = validation.data;
+    const {
+      items,
+      requirements,
+      mode = "default",
+      numRecipes = 3,
+      fullSteps = false,
+    } = validation.data;
+
+    console.log("backend: ", { mode, numRecipes, fullSteps });
 
     // 4. Initialize Groq client
     const groq = new Groq({
@@ -87,8 +100,15 @@ export async function POST(request: Request) {
     });
 
     // 5. Create secure prompts with prompt injection protection
-    const systemMessage = createSystemMessage();
-    const userPrompt = createUserPrompt(items, requirements);
+    const systemMessage = createSystemMessage(mode);
+    const userPrompt = createUserPrompt(
+      items,
+      requirements,
+      numRecipes,
+      fullSteps
+    );
+
+    console.log({ systemMessage, userPrompt });
 
     // 6. Check if streaming is requested
     const acceptHeader = request.headers.get("accept");
@@ -136,7 +156,7 @@ export async function POST(request: Request) {
         headers: {
           "Content-Type": "text/event-stream",
           "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
+          Connection: "keep-alive",
           "X-RateLimit-Limit": rateLimit.limit.toString(),
           "X-RateLimit-Remaining": rateLimit.remaining.toString(),
           "X-RateLimit-Reset": new Date(rateLimit.reset).toISOString(),
@@ -161,7 +181,8 @@ export async function POST(request: Request) {
       max_tokens: 1024,
     });
 
-    const recipes = completion.choices[0]?.message?.content || "No recipes found.";
+    const recipes =
+      completion.choices[0]?.message?.content || "No recipes found.";
 
     return NextResponse.json<RecipeResponse>(
       { recipes },
