@@ -36,7 +36,9 @@ export default function RecipeForm({
           type="button"
           className="w-full p-4 text-lg bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white border-none rounded-xl cursor-pointer transition-colors font-semibold mt-2 shadow-md hover:shadow-lg"
         >
-          {loading ? "Getting recipes..." : "✨ What can I make?"}
+          {loading
+            ? "🤖 Beep, boop, getting recipes..."
+            : "✨ Suggest some meals!"}
         </button>
         <button
           type="button"

@@ -6,9 +6,12 @@ export default function Header() {
       <h1 className="text-5xl font-bold text-terracotta-600 mb-2 drop-shadow-sm">
         🍽 🤷 🥗
       </h1>
+      <h1 className="text-5xl font-bold text-terracotta-600 mb-2 drop-shadow-sm">
+        Let &apos;em cook
+      </h1>
       {/* </div> */}
       <p className="text-xl text-gray-600 font-light">
-        Transform your ingredients into delicious meals
+        Don&apos;t waste brain power on meal prep.
       </p>
     </div>
   );
