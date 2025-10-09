@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { createErrorResponse, ErrorCode } from "@/lib/errors.ts";
-import { verifyMagicLink } from "@/lib/magicLink.ts";
-import { createSession, createSessionCookie } from "@/lib/session.ts";
-import { getBaseUrl } from "@/lib/magicLink.ts";
+import { createErrorResponse, ErrorCode } from "@/lib/errors";
+import { verifyMagicLink } from "@/lib/magicLink";
+import { createSession, createSessionCookie } from "@/lib/session";
+import { getBaseUrl } from "@/lib/magicLink";
 
 export async function GET(request: Request) {
   try {
