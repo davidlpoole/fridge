@@ -23,17 +23,20 @@ export async function POST(request: Request) {
     const rateLimit = await checkAuthRateLimit(clientId);
 
     if (!rateLimit.allowed) {
-      const headers = new Headers();
-      headers.set("X-RateLimit-Limit", "5");
-      headers.set("X-RateLimit-Remaining", "0");
-      headers.set("X-RateLimit-Reset", new Date(rateLimit.reset_at).toISOString());
-
-      return createErrorResponse(
-        "Too many login requests",
-        429,
-        ErrorCode.RATE_LIMIT_EXCEEDED,
-        `Please wait before requesting another login link. Reset at ${new Date(rateLimit.reset_at).toLocaleTimeString()}`,
-        headers
+      return NextResponse.json(
+        {
+          error: "Too many login requests",
+          code: ErrorCode.RATE_LIMIT_EXCEEDED,
+          details: `Please wait before requesting another login link. Reset at ${new Date(rateLimit.reset_at).toLocaleTimeString()}`,
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": "5",
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": new Date(rateLimit.reset_at).toISOString(),
+          },
+        }
       );
     }
 

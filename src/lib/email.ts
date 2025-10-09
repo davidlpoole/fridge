@@ -1,10 +1,19 @@
 // Email service using Resend
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@example.com";
 const APP_NAME = "Fridge Recipe App";
+
+/**
+ * Get or create Resend client
+ */
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+  return new Resend(apiKey);
+}
 
 /**
  * Send a magic link email
@@ -13,6 +22,13 @@ export async function sendMagicLinkEmail(
   email: string,
   magicLinkUrl: string
 ): Promise<boolean> {
+  const resend = getResendClient();
+  
+  if (!resend) {
+    console.error("Resend API key not configured");
+    return false;
+  }
+
   try {
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
