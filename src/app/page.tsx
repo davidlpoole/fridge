@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage.ts";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import {
   STORAGE_KEY,
   API_KEY_STORAGE_KEY,
   REQUIREMENTS_STORAGE_KEY,
-} from "../lib/constants.ts";
-import SettingsModal from "../components/SettingsModal.tsx";
-import IngredientInput from "../components/IngredientInput.tsx";
-import IngredientList from "../components/IngredientList.tsx";
-import RecipeForm from "../components/RecipeForm.tsx";
-import RecipeDisplay from "../components/RecipeDisplay.tsx";
-import Header from "../components/Header.tsx";
+} from "@/lib/constants";
+import SettingsModal from "@/components/SettingsModal";
+import IngredientInput from "@/components/IngredientInput";
+import IngredientList from "@/components/IngredientList";
+import RecipeForm from "@/components/RecipeForm";
+import RecipeDisplay from "@/components/RecipeDisplay";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [items, setItems, itemsLoading] = useLocalStorage<string[]>(
