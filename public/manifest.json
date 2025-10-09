@@ -1,0 +1,39 @@
+{
+  "name": "What To Cook: AI-Powered Recipe Ideas",
+  "short_name": "What To Cook",
+  "description": "Transform ingredients from your fridge and pantry into delicious recipes. Get AI-powered recipe suggestions tailored to what you have on hand.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8F0",
+  "theme_color": "#D2691E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Get Recipe Ideas",
+      "short_name": "Recipes",
+      "description": "Generate recipe ideas from your ingredients",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

@@ -2,18 +2,28 @@
 
 import { useState } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { STORAGE_KEY, API_KEY_STORAGE_KEY, REQUIREMENTS_STORAGE_KEY } from "@/lib/constants";
-import SettingsButton from "@/components/SettingsButton";
+import {
+  STORAGE_KEY,
+  API_KEY_STORAGE_KEY,
+  REQUIREMENTS_STORAGE_KEY,
+} from "@/lib/constants";
 import SettingsModal from "@/components/SettingsModal";
 import IngredientInput from "@/components/IngredientInput";
 import IngredientList from "@/components/IngredientList";
 import RecipeForm from "@/components/RecipeForm";
 import RecipeDisplay from "@/components/RecipeDisplay";
+import Header from "@/components/Header";
 
 export default function Home() {
-  const [items, setItems, itemsLoading] = useLocalStorage<string[]>(STORAGE_KEY, []);
+  const [items, setItems, itemsLoading] = useLocalStorage<string[]>(
+    STORAGE_KEY,
+    []
+  );
   const [apiKey, setApiKey] = useLocalStorage<string>(API_KEY_STORAGE_KEY, "");
-  const [userRequirements, setUserRequirements] = useLocalStorage<string>(REQUIREMENTS_STORAGE_KEY, "");
+  const [userRequirements, setUserRequirements] = useLocalStorage<string>(
+    REQUIREMENTS_STORAGE_KEY,
+    ""
+  );
   const [recipes, setRecipes] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -47,21 +57,21 @@ export default function Home() {
 
   const getRecipes = async () => {
     if (items.length === 0) return;
-    
+
     if (!apiKey) {
       setRecipes("Please set your Groq API key in settings (⚙️ icon)");
       return;
     }
-    
+
     setLoading(true);
     setRecipes(""); // Clear previous recipes
-    
+
     try {
       const response = await fetch("/api/recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "text/event-stream",
+          Accept: "text/event-stream",
           "X-API-Key": apiKey,
         },
         body: JSON.stringify({ items, requirements: userRequirements }),
@@ -69,7 +79,9 @@ export default function Home() {
 
       if (!response.ok) {
         const data = await response.json();
-        setRecipes(`Error: ${data.error}${data.details ? ` - ${data.details}` : ""}`);
+        setRecipes(
+          `Error: ${data.error}${data.details ? ` - ${data.details}` : ""}`
+        );
         setLoading(false);
         return;
       }
@@ -80,7 +92,7 @@ export default function Home() {
         // Handle streaming response
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
-        
+
         if (!reader) {
           setRecipes("Error: Unable to read streaming response");
           setLoading(false);
@@ -88,15 +100,15 @@ export default function Home() {
         }
 
         let accumulatedText = "";
-        
+
         while (true) {
           const { done, value } = await reader.read();
-          
+
           if (done) {
             setLoading(false);
             break;
           }
-          
+
           const chunk = decoder.decode(value, { stream: true });
           accumulatedText += chunk;
           setRecipes(accumulatedText);
@@ -108,40 +120,42 @@ export default function Home() {
         setLoading(false);
       }
     } catch (error) {
-      setRecipes("Error getting recipes: " + (error instanceof Error ? error.message : "Unknown error"));
+      setRecipes(
+        "Error getting recipes: " +
+          (error instanceof Error ? error.message : "Unknown error")
+      );
       setLoading(false);
     }
   };
 
   return (
     <>
-      <SettingsButton onClick={openSettings} />
-      <SettingsModal 
+      <SettingsModal
         isOpen={showSettings}
         apiKey={apiKey}
         onClose={closeSettings}
         onSave={saveSettings}
       />
       <main className="max-w-3xl mx-auto px-6 py-8 font-sans">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-terracotta-600 mb-2 drop-shadow-sm">🍳 What To Cook</h1>
-          <p className="text-xl text-gray-600 font-light">Transform your ingredients into delicious meals</p>
-        </div>
-
+        <Header />
         <IngredientInput onAdd={addItem} />
-        <IngredientList 
+        <IngredientList
           items={items}
           onRemove={removeItem}
           onEdit={editItem}
           isLoading={itemsLoading}
         />
-        <RecipeForm 
-          userRequirements={userRequirements}
-          onRequirementsChange={setUserRequirements}
-          onSubmit={getRecipes}
-          loading={loading}
-          hasItems={items.length > 0}
-        />
+        <div className="flex flex-col gap-4">
+          <RecipeForm
+            userRequirements={userRequirements}
+            onRequirementsChange={setUserRequirements}
+            onSubmit={getRecipes}
+            loading={loading}
+            hasItems={items.length > 0}
+            onSettings={openSettings}
+          />
+          {/* <SettingsButton onClick={openSettings} /> */}
+        </div>
         <RecipeDisplay recipes={recipes} />
       </main>
     </>

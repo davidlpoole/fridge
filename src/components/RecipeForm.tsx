@@ -4,14 +4,16 @@ interface RecipeFormProps {
   onSubmit: () => void;
   loading: boolean;
   hasItems: boolean;
+  onSettings: () => void;
 }
 
-export default function RecipeForm({ 
-  userRequirements, 
-  onRequirementsChange, 
-  onSubmit, 
+export default function RecipeForm({
+  userRequirements,
+  onRequirementsChange,
+  onSubmit,
   loading,
-  hasItems
+  hasItems,
+  onSettings,
 }: RecipeFormProps) {
   return (
     <div>
@@ -27,13 +29,24 @@ export default function RecipeForm({
           />
         </label>
       </div>
-      <button 
-        onClick={onSubmit} 
-        disabled={loading || !hasItems} 
-        className="w-full p-4 text-lg bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white border-none rounded-xl cursor-pointer transition-colors font-semibold mt-2 shadow-md hover:shadow-lg"
-      >
-        {loading ? "Getting recipes..." : "What can I make?"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={onSubmit}
+          disabled={loading || !hasItems}
+          type="button"
+          className="w-full p-4 text-lg bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white border-none rounded-xl cursor-pointer transition-colors font-semibold mt-2 shadow-md hover:shadow-lg"
+        >
+          {loading ? "Getting recipes..." : "✨ What can I make?"}
+        </button>
+        <button
+          type="button"
+          onClick={onSettings}
+          className="p-4 text-lg bg-terracotta-500 hover:bg-terracotta-600 text-white border-none rounded-xl cursor-pointer transition-colors font-semibold mt-2 shadow-md hover:shadow-lg"
+          title="Settings"
+        >
+          ⚙️
+        </button>
+      </div>
     </div>
   );
 }
