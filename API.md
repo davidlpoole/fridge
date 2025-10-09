@@ -4,6 +4,8 @@
 
 The Fridge Recipes API is a RESTful API that provides AI-powered recipe suggestions based on available ingredients. The API uses Groq's LLaMA 3.3 70B model to generate creative recipe ideas.
 
+The API now supports **user authentication** with passwordless magic link login, allowing users to save their ingredients, dietary requirements, and Groq API keys securely in the cloud.
+
 ## Base URL
 
 ```
@@ -12,10 +14,13 @@ http://localhost:3000/api
 
 ## Authentication
 
-The API requires a Groq API key for authentication. You can provide the key in one of two ways:
+### For Recipes API
 
-1. **Header**: Include your API key in the `X-API-Key` header
-2. **Environment Variable**: Set `GROQ_API_KEY` environment variable
+The API requires a Groq API key for generating recipes. You can provide the key in one of three ways:
+
+1. **User Account** (Recommended): Sign in and save your API key in your profile - it will be used automatically
+2. **Header**: Include your API key in the `X-API-Key` header
+3. **Environment Variable**: Set `GROQ_API_KEY` environment variable
 
 ```bash
 curl -X POST http://localhost:3000/api/recipes \
@@ -24,16 +29,25 @@ curl -X POST http://localhost:3000/api/recipes \
   -d '{"items": ["chicken", "rice", "broccoli"]}'
 ```
 
+### For User Endpoints
+
+User endpoints require a valid session cookie obtained through magic link authentication. The session is automatically included in requests from the web app.
+
 ## Rate Limiting
 
 The API implements rate limiting to prevent abuse:
 
+### Recipe Generation
 - **Limit**: 10 requests per minute per IP address
 - **Headers**: Rate limit information is included in response headers:
   - `X-RateLimit-Limit`: Maximum requests allowed in the window
   - `X-RateLimit-Remaining`: Remaining requests in current window
   - `X-RateLimit-Reset`: Time when the rate limit resets (ISO 8601)
   - `Retry-After`: Seconds to wait before retrying (only on 429 responses)
+
+### Authentication Requests
+- **Limit**: 5 login requests per 15 minutes per IP address
+- Prevents abuse of the magic link email system
 
 When rate limit is exceeded, the API returns a `429 Too Many Requests` response.
 
@@ -61,9 +75,15 @@ Returns API information and available endpoints.
 }
 ```
 
+---
+
+## Recipe Endpoints
+
 ### POST /api/recipes
 
 Generates recipe suggestions based on provided ingredients.
+
+**Authentication**: Optional (API key in header if not authenticated)
 
 **Request Body:**
 
@@ -98,6 +118,182 @@ curl -X POST http://localhost:3000/api/recipes \
 - `X-RateLimit-Limit`: 10
 - `X-RateLimit-Remaining`: 9
 - `X-RateLimit-Reset`: 2025-01-08T12:34:56.789Z
+
+---
+
+## Authentication Endpoints
+
+### POST /api/auth/request-login
+
+Request a magic link to sign in or sign up.
+
+**Rate Limit**: 5 requests per 15 minutes per IP
+
+**Request Body:**
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Login link sent! Check your email."
+}
+```
+
+**Response Headers:**
+- `X-RateLimit-Limit`: 5
+- `X-RateLimit-Remaining`: 4
+- `X-RateLimit-Reset`: 2025-01-08T12:45:00.000Z
+
+**Error Responses:**
+- `400`: Invalid email address
+- `429`: Too many requests
+- `500`: Email service error
+
+### GET /api/auth/verify
+
+Verify a magic link token and create a session. This endpoint is called automatically when users click the magic link in their email.
+
+**Query Parameters:**
+- `token`: The magic link token from the email
+
+**Success**: Redirects to `/?login=success` with session cookie set
+
+**Error**: Redirects to `/?error=invalid_or_expired_link`
+
+### POST /api/auth/logout
+
+Logout the current user and clear their session.
+
+**Authentication**: Required (session cookie)
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Logged out successfully"
+}
+```
+
+---
+
+## User Profile Endpoints
+
+### GET /api/user
+
+Get the current user's profile.
+
+**Authentication**: Required (session cookie)
+
+**Success Response (200 OK):**
+
+```json
+{
+  "email": "user@example.com",
+  "items": ["chicken", "rice", "broccoli"],
+  "dietary": "vegetarian, gluten-free",
+  "has_api_key": true
+}
+```
+
+**Error Responses:**
+- `401`: Not authenticated or session expired
+
+### PUT /api/user
+
+Update the current user's profile.
+
+**Authentication**: Required (session cookie)
+
+**Request Body:**
+
+```json
+{
+  "dietary": "vegetarian, gluten-free, quick meals",
+  "groq_api_key": "gsk_..." // Optional - pass empty string to remove
+}
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "profile": {
+    "email": "user@example.com",
+    "items": ["chicken", "rice"],
+    "dietary": "vegetarian, gluten-free, quick meals",
+    "has_api_key": true
+  }
+}
+```
+
+**Error Responses:**
+- `401`: Not authenticated or session expired
+- `400`: Invalid request data
+
+### POST /api/user/sync
+
+Sync local data (items, dietary requirements, API key) to the user's profile.
+
+**Authentication**: Required (session cookie)
+
+**Request Body:**
+
+```json
+{
+  "items": ["chicken", "rice", "broccoli"],
+  "dietary": "vegetarian, gluten-free",
+  "groq_api_key": "gsk_..." // Optional
+}
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Data synced successfully",
+  "profile": {
+    "email": "user@example.com",
+    "items": ["chicken", "rice", "broccoli"],
+    "dietary": "vegetarian, gluten-free",
+    "has_api_key": true
+  }
+}
+```
+
+**Error Responses:**
+- `401`: Not authenticated or session expired
+- `400`: Invalid request data
+
+### DELETE /api/user
+
+Delete the current user's account and all associated data.
+
+**Authentication**: Required (session cookie)
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Account deleted successfully"
+}
+```
+
+**Error Responses:**
+- `401`: Not authenticated or session expired
+- `404`: User not found
+
+---
 
 ## Streaming Support
 
