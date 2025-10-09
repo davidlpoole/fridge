@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import PWARegister from "@/components/PWARegister";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "What To Cook: AI-Powered Recipe Ideas",
@@ -44,7 +45,9 @@ export default function RootLayout({
       </head>
       <body>
         <PWARegister />
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <footer className="text-center py-4 text-sm text-gray-500">
           © {new Date().getFullYear()} <a href="https://github.com/davidlpoole" target="_blank" rel="noopener noreferrer" className="hover:text-terracotta-600 transition-colors">davidlpoole</a>
         </footer>
