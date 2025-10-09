@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
-import { createErrorResponse, ErrorCode } from "@/lib/errors";
-import { verifyMagicLink } from "@/lib/magicLink";
-import { createSession, createSessionCookie } from "@/lib/session";
+import { createErrorResponse, ErrorCode } from "@/lib/errors.ts";
+import { verifyMagicLink } from "@/lib/magicLink.ts";
+import { createSession, createSessionCookie } from "@/lib/session.ts";
+import { getBaseUrl } from "@/lib/magicLink.ts";
 
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const token = url.searchParams.get("token");
+    const baseUrl = getBaseUrl(request);
 
     if (!token) {
       return createErrorResponse(
@@ -23,8 +25,7 @@ export async function GET(request: Request) {
     if (!email) {
       // Redirect to home with error
       return NextResponse.redirect(
-        new URL("/?error=invalid_or_expired_link", url.origin),
-        { status: 302 }
+        new URL("/?error=invalid_or_expired_link", baseUrl)
       );
     }
 
@@ -32,19 +33,15 @@ export async function GET(request: Request) {
     const sessionToken = await createSession(email);
 
     // Redirect to home with session cookie
-    const response = NextResponse.redirect(new URL("/?login=success", url.origin), {
-      status: 302,
-    });
+    const response = NextResponse.redirect(new URL("/?login=success", baseUrl));
 
     response.headers.set("Set-Cookie", createSessionCookie(sessionToken));
 
     return response;
   } catch (error) {
     console.error("Error verifying magic link:", error);
-    const url = new URL(request.url);
     return NextResponse.redirect(
-      new URL("/?error=verification_failed", url.origin),
-      { status: 302 }
+      new URL("/?error=verification_failed", getBaseUrl(request))
     );
   }
 }
