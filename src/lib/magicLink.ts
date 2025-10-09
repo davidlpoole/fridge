@@ -10,7 +10,9 @@ const MAGIC_LINK_EXPIRY = 15 * 60 * 1000; // 15 minutes in milliseconds
 function generateToken(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+    ""
+  );
 }
 
 /**
@@ -65,6 +67,8 @@ export async function verifyMagicLink(token: string): Promise<string | null> {
  * Get the base URL for the application
  */
 export function getBaseUrl(request: Request): string {
+  console.log("Request URL:", request.url);
+  console.log("Request Headers:", Object.fromEntries(request.headers));
   const url = new URL(request.url);
   return `${url.protocol}//${url.host}`;
 }
