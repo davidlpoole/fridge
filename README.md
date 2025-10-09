@@ -8,6 +8,8 @@ A Next.js application that helps you discover recipes based on ingredients you h
 - **AI-Powered Recipes**: Get recipe suggestions using Groq's LLaMA 3.3 70B model
 - **Custom Requirements**: Specify dietary restrictions, cuisine preferences, or other requirements
 - **Persistent Storage**: Your ingredients and settings are saved locally in your browser
+- **Progressive Web App**: Install the app on your mobile device or desktop for an app-like experience
+- **Offline Support**: Service worker caches app resources for offline functionality
 - **Clean Architecture**: Well-organized component structure for maintainability and reusability
 
 ## Getting Started
@@ -67,10 +69,50 @@ npm run start
 - **Styling**: Tailwind CSS
 - **AI Provider**: Groq (LLaMA 3.3 70B Versatile)
 - **Language**: TypeScript
+- **PWA**: next-pwa for Progressive Web App functionality
+
+## Installing as PWA
+
+### On Mobile (iOS/Android)
+
+**iOS (Safari):**
+1. Open the app in Safari
+2. Tap the Share button (square with arrow)
+3. Scroll down and tap "Add to Home Screen"
+4. Tap "Add" to confirm
+
+**Android (Chrome):**
+1. Open the app in Chrome
+2. Tap the menu (three dots)
+3. Tap "Add to Home Screen" or "Install App"
+4. Tap "Add" to confirm
+
+### On Desktop
+
+**Chrome/Edge:**
+1. Open the app
+2. Look for the install icon (+) in the address bar
+3. Click "Install"
+
+**Desktop PWA features:**
+- Runs in its own window
+- Appears in your application menu
+- Works offline with cached content
 
 ## Project Structure
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed information about the component architecture and design patterns used in this project.
+
+## PWA Documentation
+
+For information about the Progressive Web App features and how to install the app on your device:
+
+- See [PWA.md](./PWA.md) for comprehensive PWA documentation including:
+  - Installation instructions for mobile and desktop
+  - Service worker configuration
+  - Caching strategies
+  - Offline functionality
+  - Troubleshooting guide
 
 ## API Documentation
 
