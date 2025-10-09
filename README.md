@@ -1,6 +1,8 @@
-# 🍳 Fridge Recipes
+# 🍽 🤷 🥗 What to Cook?!
 
 A Next.js application that helps you discover recipes based on ingredients you have in your fridge and pantry. Powered by Groq's AI to generate creative recipe suggestions tailored to your available ingredients and dietary requirements.
+
+<img src="iphone-screenshot.jpg" alt="Screenshot" width="300" />
 
 ## Features
 
@@ -76,12 +78,14 @@ npm run start
 ### On Mobile (iOS/Android)
 
 **iOS (Safari):**
+
 1. Open the app in Safari
 2. Tap the Share button (square with arrow)
 3. Scroll down and tap "Add to Home Screen"
 4. Tap "Add" to confirm
 
 **Android (Chrome):**
+
 1. Open the app in Chrome
 2. Tap the menu (three dots)
 3. Tap "Add to Home Screen" or "Install App"
@@ -90,11 +94,13 @@ npm run start
 ### On Desktop
 
 **Chrome/Edge:**
+
 1. Open the app
 2. Look for the install icon (+) in the address bar
 3. Click "Install"
 
 **Desktop PWA features:**
+
 - Runs in its own window
 - Appears in your application menu
 - Works offline with cached content
