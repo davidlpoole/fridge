@@ -67,8 +67,14 @@ export async function verifyMagicLink(token: string): Promise<string | null> {
  * Get the base URL for the application
  */
 export function getBaseUrl(request: Request): string {
-  console.log("Request URL:", request.url);
-  console.log("Request Headers:", Object.fromEntries(request.headers));
+  const headers = request.headers;
+  const forwardedHost = headers.get("x-forwarded-host");
+  const forwardedProto = headers.get("x-forwarded-proto");
+
+  if (forwardedHost && forwardedProto) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+
   const url = new URL(request.url);
   return `${url.protocol}//${url.host}`;
 }
