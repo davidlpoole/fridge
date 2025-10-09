@@ -1,28 +1,40 @@
 // Prompt engineering utilities to prevent prompt injection and ensure LLM stays on task
 
+import { spec } from "node:test/reporters";
+
 /**
  * Creates a secure system message that helps prevent prompt injection
  * and keeps the LLM focused on recipe generation
  */
 export function createSystemMessage(mode: string = ""): string {
   let tone = "professional and concise";
-  if (mode === "sarcasm") {
-    tone = "sarcastic and witty";
-  } else if (mode === "friendly") {
+  if (mode === "friendly") {
     tone = "friendly and cheerful";
-  } else if (mode === "creative") {
-    tone = "creative and imaginative";
-  } else if (mode === "weird") {
-    tone = "weird and gross";
-  } else if (mode === "funny") {
-    tone = "funny and light-hearted";
-  } else if (mode === "evil") {
-    tone = "malevolent, sinister and unhinged";
-  } else if (mode === "poetic") {
-    tone = "poetic, lyrical and rhyming";
   } else if (mode === "backpacker") {
     tone = "empathetic and frugal";
+  } else if (mode === "poetic") {
+    tone = "poetic, lyrical and rhyming";
+  } else if (mode === "creative") {
+    tone = "creative and imaginative";
+  } else if (mode === "funny") {
+    tone = "funny and light-hearted";
+  } else if (mode === "sarcastic") {
+    tone = "sarcastic and witty";
+  } else if (mode === "weird") {
+    tone = "weird and gross";
+  } else if (mode === "evil") {
+    tone = "malevolent, sinister and unhinged";
   }
+  // <option value="default">Default</option>
+  // <option value="friendly">Friendly</option>
+  // <option value="backpacker">Backpacker</option>
+  // <option value="poetic">Poetic</option>
+  // <option value="creative">Creative</option>
+  // <option value="funny">Funny</option>
+  // <option value="sarcastic">Sarcastic</option>
+  // <option value="weird">Weird</option>
+  // <option value="evil">Evil</option>
+  const unsafeModes = ["creative", "funny", "sarcastic", "weird", "evil"];
 
   return `You are a recipe suggestion assistant. Your ONLY purpose is to suggest recipes.
 
@@ -37,9 +49,9 @@ IMPORTANT RULES:
 - Use emojis to make the recipes more engaging
 - Always maintain a ${tone} tone in your responses.
 ${
-  mode === "evil"
-    ? "- Suggest the most unhealthy options possible (include extra gross ingredients not specified by the user if necessary).\n"
-    : "- If the ingredients seem unusual or unsafe, politely decline to suggest recipes and explain why.\n"
+  unsafeModes.includes(mode)
+    ? `- Suggest the most ${mode} options possible (include extra gross ingredients not specified by the user if necessary).`
+    : `- If the ingredients seem unusual or unsafe, politely decline to suggest recipes and explain why.`
 }
 `;
 }

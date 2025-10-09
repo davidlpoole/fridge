@@ -94,13 +94,13 @@ export default function SettingsModal({
             >
               <option value="default">Default</option>
               <option value="friendly">Friendly</option>
-              <option value="sarcasm">Sarcastic</option>
-              <option value="creative">Creative</option>
-              <option value="weird">Weird</option>
-              <option value="funny">Funny</option>
-              <option value="evil">Evil</option>
-              <option value="poetic">Poetic</option>
               <option value="backpacker">Backpacker</option>
+              <option value="poetic">Poetic</option>
+              <option value="creative">Creative</option>
+              <option value="funny">Funny</option>
+              <option value="sarcastic">Sarcastic</option>
+              <option value="weird">Weird</option>
+              <option value="evil">Evil</option>
             </select>
           </label>
         </div>
