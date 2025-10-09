@@ -4,7 +4,7 @@ export default function Header() {
       {/* <div className="flex justify-center text-6xl mb-4 items-center"> */}
       {/* <div className=""></div> */}
       <h1 className="text-5xl font-bold text-terracotta-600 mb-2 drop-shadow-sm">
-        What To Cook
+        🍽 🤷 🥗
       </h1>
       {/* </div> */}
       <p className="text-xl text-gray-600 font-light">

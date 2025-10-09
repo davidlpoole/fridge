@@ -7,7 +7,6 @@ import {
   API_KEY_STORAGE_KEY,
   REQUIREMENTS_STORAGE_KEY,
 } from "../lib/constants.ts";
-import SettingsButton from "../components/SettingsButton.tsx";
 import SettingsModal from "../components/SettingsModal.tsx";
 import IngredientInput from "../components/IngredientInput.tsx";
 import IngredientList from "../components/IngredientList.tsx";
@@ -131,7 +130,6 @@ export default function Home() {
 
   return (
     <>
-      <SettingsButton onClick={openSettings} />
       <SettingsModal
         isOpen={showSettings}
         apiKey={apiKey}
@@ -147,13 +145,17 @@ export default function Home() {
           onEdit={editItem}
           isLoading={itemsLoading}
         />
-        <RecipeForm
-          userRequirements={userRequirements}
-          onRequirementsChange={setUserRequirements}
-          onSubmit={getRecipes}
-          loading={loading}
-          hasItems={items.length > 0}
-        />
+        <div className="flex flex-col gap-4">
+          <RecipeForm
+            userRequirements={userRequirements}
+            onRequirementsChange={setUserRequirements}
+            onSubmit={getRecipes}
+            loading={loading}
+            hasItems={items.length > 0}
+            onSettings={openSettings}
+          />
+          {/* <SettingsButton onClick={openSettings} /> */}
+        </div>
         <RecipeDisplay recipes={recipes} />
       </main>
     </>
