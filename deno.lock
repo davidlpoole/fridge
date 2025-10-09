@@ -8,12 +8,14 @@
     "npm:eslint-config-next@15.5.4": "15.5.4_eslint@9.37.0_typescript@5.9.3_@typescript-eslint+parser@8.46.0__eslint@9.37.0__typescript@5.9.3_eslint-plugin-import@2.32.0__eslint@9.37.0",
     "npm:eslint@9.37.0": "9.37.0",
     "npm:groq-sdk@0.33": "0.33.0",
+    "npm:jose@^6.1.0": "6.1.0",
     "npm:next-pwa@^5.6.0": "5.6.0_next@15.3.5__react@19.1.0__react-dom@19.1.0___react@19.1.0_react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:next@^15.3.5": "15.3.5_react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:next@latest": "15.3.5_react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:postcss@^8.5.6": "8.5.6",
     "npm:react-dom@19": "19.1.0_react@19.1.0",
     "npm:react@19": "19.1.0",
+    "npm:resend@^6.1.2": "6.1.2",
     "npm:tailwindcss@^3.4.18": "3.4.18_postcss@8.5.6_jiti@1.21.7",
     "npm:typescript@5.9.3": "5.9.3",
     "npm:zod@^4.1.12": "4.1.12"
@@ -3175,6 +3177,9 @@
       "integrity": "sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==",
       "bin": true
     },
+    "jose@6.1.0": {
+      "integrity": "sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA=="
+    },
     "js-tokens@4.0.0": {
       "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
     },
@@ -3815,6 +3820,9 @@
     },
     "require-from-string@2.0.2": {
       "integrity": "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw=="
+    },
+    "resend@6.1.2": {
+      "integrity": "sha512-C9Q+YkRe57P8MQlkHG3yatSR/B6sqBGA06Ri2DveJfkz9Vm16182FC/iHB0K6IAfmqZ4yRrFebFw1EPuktLtSg=="
     },
     "resolve-from@4.0.0": {
       "integrity": "sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g=="
@@ -4844,11 +4852,13 @@
         "npm:eslint-config-next@15.5.4",
         "npm:eslint@9.37.0",
         "npm:groq-sdk@0.33",
+        "npm:jose@^6.1.0",
         "npm:next-pwa@^5.6.0",
         "npm:next@^15.3.5",
         "npm:postcss@^8.5.6",
         "npm:react-dom@19",
         "npm:react@19",
+        "npm:resend@^6.1.2",
         "npm:tailwindcss@^3.4.18",
         "npm:typescript@5.9.3",
         "npm:zod@^4.1.12"
