@@ -6,6 +6,9 @@ import {
   STORAGE_KEY,
   API_KEY_STORAGE_KEY,
   REQUIREMENTS_STORAGE_KEY,
+  MODE_STORAGE_KEY,
+  NUM_RECIPES_STORAGE_KEY,
+  FULL_STEPS_STORAGE_KEY,
 } from "@/lib/constants";
 import SettingsModal from "@/components/SettingsModal";
 import IngredientInput from "@/components/IngredientInput";
@@ -27,6 +30,15 @@ export default function Home() {
   const [recipes, setRecipes] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [mode, setMode] = useLocalStorage<string>(MODE_STORAGE_KEY, "default");
+  const [numRecipes, setNumRecipes] = useLocalStorage<number>(
+    NUM_RECIPES_STORAGE_KEY,
+    1
+  );
+  const [fullSteps, setFullSteps] = useLocalStorage<boolean>(
+    FULL_STEPS_STORAGE_KEY,
+    false
+  );
 
   const addItem = (item: string) => {
     setItems([...items, item]);
@@ -50,8 +62,16 @@ export default function Home() {
     setShowSettings(false);
   };
 
-  const saveSettings = (newApiKey: string) => {
+  const saveSettings = (
+    newApiKey: string,
+    settings?: { mode: string; numRecipes: number; fullSteps: boolean }
+  ) => {
     setApiKey(newApiKey);
+    if (settings) {
+      setMode(settings.mode);
+      setNumRecipes(settings.numRecipes);
+      setFullSteps(settings.fullSteps);
+    }
     setShowSettings(false);
   };
 
@@ -65,7 +85,7 @@ export default function Home() {
 
     setLoading(true);
     setRecipes(""); // Clear previous recipes
-
+    console.log("frontend: ", { mode, numRecipes, fullSteps });
     try {
       const response = await fetch("/api/recipes", {
         method: "POST",
@@ -74,7 +94,13 @@ export default function Home() {
           Accept: "text/event-stream",
           "X-API-Key": apiKey,
         },
-        body: JSON.stringify({ items, requirements: userRequirements }),
+        body: JSON.stringify({
+          items,
+          requirements: userRequirements,
+          mode,
+          numRecipes,
+          fullSteps,
+        }),
       });
 
       if (!response.ok) {
@@ -133,6 +159,9 @@ export default function Home() {
       <SettingsModal
         isOpen={showSettings}
         apiKey={apiKey}
+        mode={mode}
+        numRecipes={numRecipes}
+        fullSteps={fullSteps}
         onClose={closeSettings}
         onSave={saveSettings}
       />
@@ -153,6 +182,7 @@ export default function Home() {
             loading={loading}
             hasItems={items.length > 0}
             onSettings={openSettings}
+            numRecipes={numRecipes}
           />
           {/* <SettingsButton onClick={openSettings} /> */}
         </div>

@@ -3,24 +3,40 @@ import { useState } from "react";
 interface SettingsModalProps {
   isOpen: boolean;
   apiKey: string;
+  mode: string;
+  numRecipes: number;
+  fullSteps: boolean;
   onClose: () => void;
-  onSave: (apiKey: string) => void;
+  onSave: (
+    apiKey: string,
+    settings: { mode: string; numRecipes: number; fullSteps: boolean }
+  ) => void;
 }
 
 export default function SettingsModal({
   isOpen,
   apiKey,
+  mode: initialMode,
+  numRecipes: initialNumRecipes,
+  fullSteps: initialFullSteps,
   onClose,
   onSave,
 }: SettingsModalProps) {
   const [tempApiKey, setTempApiKey] = useState(apiKey);
+  const [mode, setMode] = useState(initialMode ?? "default");
+  const [numRecipes, setNumRecipes] = useState(initialNumRecipes ?? 3);
+  const [fullSteps, setFullSteps] = useState(initialFullSteps ?? false);
 
   const handleSave = () => {
-    onSave(tempApiKey);
+    onSave(tempApiKey, { mode, numRecipes, fullSteps });
   };
 
   const handleClose = () => {
     setTempApiKey(apiKey);
+    // reset to incoming props (current saved settings)
+    setMode(initialMode ?? "default");
+    setNumRecipes(initialNumRecipes ?? 3);
+    setFullSteps(initialFullSteps ?? false);
     onClose();
   };
 
@@ -67,6 +83,51 @@ export default function SettingsModal({
               Groq Console
             </a>
           </p>
+        </div>
+        <div className="mb-6">
+          <label className="block font-medium mb-2 text-gray-800">
+            Mode
+            <select
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
+              className="w-full p-3 text-base border-2 border-gray-300 rounded-lg outline-none transition-colors focus:border-sage-500 box-border mt-2"
+            >
+              <option value="default">Default</option>
+              <option value="friendly">Friendly</option>
+              <option value="backpacker">Backpacker</option>
+              <option value="poetic">Poetic</option>
+              <option value="creative">Creative</option>
+              <option value="funny">Funny</option>
+              <option value="sarcastic">Sarcastic</option>
+              <option value="weird">Weird</option>
+              <option value="evil">Evil</option>
+            </select>
+          </label>
+        </div>
+        <div className="mb-6">
+          <label className="block font-medium mb-2 text-gray-800">
+            Number of Recipes
+            <select
+              value={numRecipes}
+              onChange={(e) => setNumRecipes(Number(e.target.value))}
+              className="w-full p-3 text-base border-2 border-gray-300 rounded-lg outline-none transition-colors focus:border-sage-500 box-border mt-2"
+            >
+              <option value={1}>1</option>
+              <option value={2}>2</option>
+              <option value={3}>3</option>
+            </select>
+          </label>
+        </div>
+        <div className="mb-6">
+          <label className="block font-medium mb-2 text-gray-800">
+            Full Steps
+            <input
+              type="checkbox"
+              checked={fullSteps}
+              onChange={(e) => setFullSteps(e.target.checked)}
+              className="ml-2"
+            />
+          </label>
         </div>
         <div className="flex gap-2 justify-end">
           <button

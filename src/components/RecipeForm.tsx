@@ -5,6 +5,7 @@ interface RecipeFormProps {
   loading: boolean;
   hasItems: boolean;
   onSettings: () => void;
+  numRecipes: number;
 }
 
 export default function RecipeForm({
@@ -14,6 +15,7 @@ export default function RecipeForm({
   loading,
   hasItems,
   onSettings,
+  numRecipes,
 }: RecipeFormProps) {
   return (
     <div>
@@ -36,7 +38,9 @@ export default function RecipeForm({
           type="button"
           className="w-full p-4 text-lg bg-terracotta-500 hover:bg-terracotta-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white border-none rounded-xl cursor-pointer transition-colors font-semibold mt-2 shadow-md hover:shadow-lg"
         >
-          {loading ? "Getting recipes..." : "✨ What can I make?"}
+          {loading
+            ? "🤖 Beep, boop, getting recipes..."
+            : `✨ Suggest ${numRecipes > 1 ? "some meals" : "a meal"}!`}
         </button>
         <button
           type="button"

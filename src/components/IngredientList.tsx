@@ -60,7 +60,7 @@ export default function IngredientList({
   if (items.length === 0) {
     return (
       <p className="text-center text-gray-500 py-8 italic bg-cream-200 rounded-lg">
-        No items yet. Add something from your fridge and/or pantry!
+        No items yet. Add the ingredients you have on hand, then let AI cook!
       </p>
     );
   }

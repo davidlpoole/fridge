@@ -1,4 +1,4 @@
-# 🍽 🤷 🥗 What to Cook?!
+# 🍽 🤷 🥗 Let 'em cook!
 
 A Next.js application that helps you discover recipes based on ingredients you have in your fridge and pantry. Powered by Groq's AI to generate creative recipe suggestions tailored to your available ingredients and dietary requirements.
 
