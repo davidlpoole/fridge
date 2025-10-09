@@ -5,6 +5,8 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import { createErrorResponse, ErrorCode, handleGroqError } from "@/lib/errors";
 import { createSystemMessage, createUserPrompt } from "@/lib/prompts";
 import type { RecipeResponse } from "@/lib/types";
+import { getSessionTokenFromCookies, getSession } from "@/lib/session";
+import { getUserApiKey } from "@/lib/user";
 
 // Maximum request body size (1MB)
 export const config = {
@@ -44,7 +46,23 @@ export async function POST(request: Request) {
     }
 
     // 2. API Key Validation
-    const apiKey = request.headers.get("X-API-Key") || process.env.GROQ_API_KEY;
+    // Try to get API key from authenticated user first, then header, then env
+    let apiKey = request.headers.get("X-API-Key") || process.env.GROQ_API_KEY;
+    
+    // Check if user is authenticated and has a stored API key
+    const cookieHeader = request.headers.get("cookie");
+    const sessionToken = getSessionTokenFromCookies(cookieHeader);
+    
+    if (sessionToken) {
+      const session = await getSession(sessionToken);
+      if (session) {
+        const userApiKey = await getUserApiKey(session.email);
+        if (userApiKey) {
+          // Use stored API key for authenticated users
+          apiKey = userApiKey;
+        }
+      }
+    }
     
     if (!apiKey) {
       return createErrorResponse(

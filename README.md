@@ -2,17 +2,27 @@
 
 A Next.js application that helps you discover recipes based on ingredients you have in your fridge and pantry. Powered by Groq's AI to generate creative recipe suggestions tailored to your available ingredients and dietary requirements.
 
+Now with **user authentication** and **cloud storage** - save your fridge across devices!
+
 <img src="iphone-screenshot.jpg" alt="Screenshot" width="300" />
 
 ## Features
 
+### Core Features
 - **Ingredient Management**: Add, edit, and remove ingredients with an intuitive interface
 - **AI-Powered Recipes**: Get recipe suggestions using Groq's LLaMA 3.3 70B model
 - **Custom Requirements**: Specify dietary restrictions, cuisine preferences, or other requirements
-- **Persistent Storage**: Your ingredients and settings are saved locally in your browser
 - **Progressive Web App**: Install the app on your mobile device or desktop for an app-like experience
 - **Offline Support**: Service worker caches app resources for offline functionality
 - **Clean Architecture**: Well-organized component structure for maintainability and reusability
+
+### NEW: Multi-User Features 🎉
+- **Passwordless Authentication**: Sign in with magic links sent to your email - no password needed!
+- **Cloud Storage**: Save your fridge items, dietary requirements, and API key securely in the cloud
+- **Cross-Device Sync**: Access your saved fridge from any device
+- **Privacy First**: Your data is encrypted and private to you
+- **Account Management**: Easy profile editing and account deletion
+- **Works Anonymously Too**: App remains fully functional without an account
 
 ## Getting Started
 
@@ -20,6 +30,9 @@ A Next.js application that helps you discover recipes based on ingredients you h
 
 - [Deno](https://deno.com) runtime installed
 - A [Groq API key](https://console.groq.com/keys) (free tier available)
+- **For authentication features**:
+  - [Resend](https://resend.com) API key for sending magic link emails
+  - Domain configured for sending emails (via Resend)
 
 ### Installation
 
@@ -30,13 +43,41 @@ A Next.js application that helps you discover recipes based on ingredients you h
 npm install
 ```
 
+3. Copy `.env.example` to `.env.local` and configure:
+
+```bash
+cp .env.example .env.local
+```
+
+4. Set up your environment variables:
+
+```env
+# Optional: Default Groq API key (users can provide their own)
+GROQ_API_KEY=your_groq_api_key
+
+# Required for authentication
+RESEND_API_KEY=your_resend_api_key
+FROM_EMAIL=noreply@yourdomain.com
+JWT_SECRET=your_random_jwt_secret
+ENCRYPTION_KEY=your_random_encryption_key
+```
+
 ### Configuration
 
-1. Click the settings icon (⚙️) in the top-right corner
+#### Without an Account (Anonymous Use)
+1. Click the settings icon (⚙️) in the recipe form
 2. Enter your Groq API key
 3. Click "Save"
 
-Your API key is stored locally in your browser and is used for all recipe generation requests.
+Your API key is stored locally in your browser.
+
+#### With an Account (Recommended)
+1. Click "Sign In / Sign Up" in the top-right corner
+2. Enter your email address
+3. Check your email for the magic link
+4. Click the link to sign in
+5. Save your API key and dietary requirements in your profile
+6. Your data is now saved in the cloud and synced across devices!
 
 ### Development
 
@@ -44,6 +85,8 @@ Run the development server:
 
 ```bash
 deno run dev
+# or
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the application.
@@ -61,17 +104,45 @@ npm run start
 
 1. **Add Ingredients**: Enter items from your fridge and pantry
 2. **Set Requirements** (optional): Specify dietary needs, cuisine type, cooking time, etc.
-3. **Generate Recipes**: Click "Get Recipes" to receive AI-generated suggestions
-4. **Get Inspired**: View 3 simple recipe ideas with descriptions
+3. **Sign In** (optional): Create an account to save your fridge to the cloud
+4. **Generate Recipes**: Click "Get Recipes" to receive AI-generated suggestions
+5. **Get Inspired**: View 3 simple recipe ideas with descriptions
 
 ## Technology Stack
 
 - **Framework**: Next.js 15 with React 19
-- **Runtime**: Deno
+- **Runtime**: Deno (with Node.js compatibility)
 - **Styling**: Tailwind CSS
 - **AI Provider**: Groq (LLaMA 3.3 70B Versatile)
 - **Language**: TypeScript
 - **PWA**: next-pwa for Progressive Web App functionality
+- **Database**: Deno KV for user data and sessions
+- **Authentication**: Magic link (passwordless) via Resend
+- **Encryption**: Web Crypto API for secure API key storage
+
+## Authentication & Security
+
+### How Magic Links Work
+1. User enters their email address
+2. Server generates a secure one-time token
+3. Email with magic link is sent to the user
+4. User clicks the link (valid for 15 minutes)
+5. Server verifies token and creates a session
+6. User is logged in with a secure session cookie
+
+### Security Features
+- **Rate Limiting**: Prevents abuse of authentication and API endpoints
+- **Encrypted Storage**: User API keys are encrypted using AES-GCM
+- **Secure Sessions**: JWT-based sessions with httpOnly cookies
+- **One-Time Tokens**: Magic links expire after 15 minutes and can only be used once
+- **CSRF Protection**: Session cookies use SameSite=Lax
+- **No Passwords**: Eliminates password-related security risks
+
+### Privacy
+- Your data is private and only accessible by you
+- API keys are encrypted at rest
+- You can delete your account and all data at any time
+- The app works fully anonymously if you choose not to sign in
 
 ## Installing as PWA
 
