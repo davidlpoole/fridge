@@ -1,7 +1,5 @@
 // Prompt engineering utilities to prevent prompt injection and ensure LLM stays on task
 
-import { spec } from "node:test/reporters";
-
 /**
  * Creates a secure system message that helps prevent prompt injection
  * and keeps the LLM focused on recipe generation
