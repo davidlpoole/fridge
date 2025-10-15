@@ -5,8 +5,25 @@ export interface RecipeRequest {
   requirements?: string;
 }
 
+// Structured recipe types
+export interface RecipeStep {
+  step_number: number;
+  instruction: string;
+}
+
+export interface Recipe {
+  name: string;
+  description: string;
+  steps?: RecipeStep[];
+}
+
+export interface StructuredRecipeResponse {
+  recipes: Recipe[];
+}
+
+// Legacy response type (for backward compatibility if needed)
 export interface RecipeResponse {
-  recipes: string;
+  recipes: string | StructuredRecipeResponse;
 }
 
 export interface ErrorResponse {

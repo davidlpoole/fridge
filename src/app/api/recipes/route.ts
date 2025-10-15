@@ -4,7 +4,8 @@ import { validateRecipeRequest } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { createErrorResponse, ErrorCode, handleGroqError } from "@/lib/errors";
 import { createSystemMessage, createUserPrompt } from "@/lib/prompts";
-import type { RecipeResponse } from "@/lib/types";
+import { createRecipeSchema } from "@/lib/schemas";
+import type { RecipeResponse, StructuredRecipeResponse } from "@/lib/types";
 
 // Maximum request body size (1MB)
 export const config = {
@@ -110,61 +111,11 @@ export async function POST(request: Request) {
 
     console.log({ systemMessage, userPrompt });
 
-    // 6. Check if streaming is requested
-    const acceptHeader = request.headers.get("accept");
-    const wantsStream = acceptHeader?.includes("text/event-stream");
+    // 6. Create JSON schema for structured output
+    const recipeSchema = createRecipeSchema(numRecipes, fullSteps);
 
-    if (wantsStream) {
-      // Streaming response for better UX
-      const stream = await groq.chat.completions.create({
-        messages: [
-          {
-            role: "system",
-            content: systemMessage,
-          },
-          {
-            role: "user",
-            content: userPrompt,
-          },
-        ],
-        model: "llama-3.3-70b-versatile",
-        temperature: 0.7,
-        max_tokens: 1024,
-        stream: true,
-      });
-
-      // Create a ReadableStream for the response
-      const encoder = new TextEncoder();
-      const readableStream = new ReadableStream({
-        async start(controller) {
-          try {
-            for await (const chunk of stream) {
-              const content = chunk.choices[0]?.delta?.content || "";
-              if (content) {
-                controller.enqueue(encoder.encode(content));
-              }
-            }
-            controller.close();
-          } catch (error) {
-            console.error("Streaming error:", error);
-            controller.error(error);
-          }
-        },
-      });
-
-      return new Response(readableStream, {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          Connection: "keep-alive",
-          "X-RateLimit-Limit": rateLimit.limit.toString(),
-          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
-          "X-RateLimit-Reset": new Date(rateLimit.reset).toISOString(),
-        },
-      });
-    }
-
-    // 7. Non-streaming response (default)
+    // 7. Call Groq API with structured output (streaming disabled for structured outputs)
+    // Note: Structured outputs require models that support JSON schema and work best without streaming
     const completion = await groq.chat.completions.create({
       messages: [
         {
@@ -178,14 +129,33 @@ export async function POST(request: Request) {
       ],
       model: "llama-3.3-70b-versatile",
       temperature: 0.7,
-      max_tokens: 1024,
+      max_tokens: 2048, // Increased for structured responses with multiple recipes
+      response_format: {
+        type: "json_schema",
+        json_schema: recipeSchema,
+      },
     });
 
-    const recipes =
-      completion.choices[0]?.message?.content || "No recipes found.";
+    const content = completion.choices[0]?.message?.content;
+    
+    if (!content) {
+      return NextResponse.json<RecipeResponse>(
+        { recipes: { recipes: [] } },
+        {
+          headers: {
+            "X-RateLimit-Limit": rateLimit.limit.toString(),
+            "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+            "X-RateLimit-Reset": new Date(rateLimit.reset).toISOString(),
+          },
+        }
+      );
+    }
+
+    // Parse the structured JSON response
+    const structuredRecipes: StructuredRecipeResponse = JSON.parse(content);
 
     return NextResponse.json<RecipeResponse>(
-      { recipes },
+      { recipes: structuredRecipes },
       {
         headers: {
           "X-RateLimit-Limit": rateLimit.limit.toString(),
