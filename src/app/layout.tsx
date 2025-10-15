@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import PWARegister from "@/components/PWARegister";
-import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Let 'em cook",
