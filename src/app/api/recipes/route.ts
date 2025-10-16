@@ -127,7 +127,8 @@ export async function POST(request: Request) {
           content: userPrompt,
         },
       ],
-      model: "llama-3.3-70b-versatile",
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
+      // model: "llama-3.3-70b-versatile",
       temperature: 0.7,
       max_tokens: 2048, // Increased for structured responses with multiple recipes
       response_format: {
@@ -137,7 +138,7 @@ export async function POST(request: Request) {
     });
 
     const content = completion.choices[0]?.message?.content;
-    
+
     if (!content) {
       return NextResponse.json<RecipeResponse>(
         { recipes: { recipes: [] } },

@@ -64,12 +64,14 @@ export function createUserPrompt(
 
   let prompt = `I have the following ingredients: ${sanitizedItems.join(", ")}.
 
-Please provide exactly ${numRecipes} recipe${numRecipes > 1 ? "s" : ""} using these ingredients.`;
+Please provide exactly ${numRecipes} recipe${
+    numRecipes > 1 ? "s" : ""
+  } using these ingredients.`;
 
   if (fullSteps) {
     prompt += `\n\nFor each recipe, include:
 - A creative and descriptive name
-- A brief description (2-3 sentences)
+- A brief description (1 sentence)
 - Complete preparation steps as a numbered sequence`;
   } else {
     prompt += `\n\nFor each recipe, include:

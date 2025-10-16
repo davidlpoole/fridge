@@ -47,13 +47,19 @@ export function createRecipeSchema(
 
   return {
     name: "recipe_suggestions",
-    description: `Generate exactly ${numRecipes} recipe suggestion${numRecipes > 1 ? "s" : ""} based on the provided ingredients${fullSteps ? " with full preparation steps" : ""}`,
+    description: `Generate exactly ${numRecipes} recipe suggestion${
+      numRecipes > 1 ? "s" : ""
+    } based on the provided ingredients${
+      fullSteps ? " with full preparation steps" : ""
+    }`,
     schema: {
       type: "object",
       properties: {
         recipes: {
           type: "array",
-          description: `An array of exactly ${numRecipes} recipe${numRecipes > 1 ? "s" : ""}`,
+          description: `An array of exactly ${numRecipes} recipe${
+            numRecipes > 1 ? "s" : ""
+          }`,
           items: {
             type: "object",
             properties: baseRecipeProperties,
@@ -62,8 +68,6 @@ export function createRecipeSchema(
               : ["name", "description"],
             additionalProperties: false,
           },
-          minItems: numRecipes,
-          maxItems: numRecipes,
         },
       },
       required: ["recipes"],
