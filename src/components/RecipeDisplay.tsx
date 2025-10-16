@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
+import type { StructuredRecipeResponse, Recipe } from "@/lib/types";
 
 interface RecipeDisplayProps {
-  recipes: string;
+  recipes: string | StructuredRecipeResponse;
 }
 
 export default function RecipeDisplay({ recipes }: RecipeDisplayProps) {
@@ -17,8 +18,16 @@ export default function RecipeDisplay({ recipes }: RecipeDisplayProps) {
     }
   }, [recipes]);
 
+  // Check if recipes is structured data
+  const isStructured =
+    typeof recipes === "object" && "recipes" in recipes;
+  
+  const recipesText = isStructured
+    ? formatStructuredRecipes(recipes as StructuredRecipeResponse)
+    : (recipes as string);
+
   const handleDownload = () => {
-    const blob = new Blob([recipes], { type: "text/plain" });
+    const blob = new Blob([recipesText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -51,7 +60,7 @@ export default function RecipeDisplay({ recipes }: RecipeDisplayProps) {
             </style>
           </head>
           <body>
-            <pre>${recipes}</pre>
+            <pre>${recipesText}</pre>
           </body>
         </html>
       `);
@@ -117,9 +126,72 @@ export default function RecipeDisplay({ recipes }: RecipeDisplayProps) {
           </button>
         </div>
       </div>
-      <pre className="whitespace-pre-wrap leading-relaxed text-gray-700 text-base font-sans">
-        {recipes}
-      </pre>
+      {isStructured ? (
+        <StructuredRecipeView recipes={(recipes as StructuredRecipeResponse).recipes} />
+      ) : (
+        <pre className="whitespace-pre-wrap leading-relaxed text-gray-700 text-base font-sans">
+          {recipesText}
+        </pre>
+      )}
+    </div>
+  );
+}
+
+// Helper function to format structured recipes as text
+function formatStructuredRecipes(data: StructuredRecipeResponse): string {
+  return data.recipes
+    .map((recipe, index) => {
+      let text = `${index + 1}. ${recipe.name}\n\n${recipe.description}`;
+      
+      if (recipe.steps && recipe.steps.length > 0) {
+        text += "\n\nPreparation Steps:\n";
+        recipe.steps.forEach((step) => {
+          text += `${step.step_number}. ${step.instruction}\n`;
+        });
+      }
+      
+      return text;
+    })
+    .join("\n\n---\n\n");
+}
+
+// Component to render structured recipes with better formatting
+function StructuredRecipeView({ recipes }: { recipes: Recipe[] }) {
+  return (
+    <div className="space-y-6">
+      {recipes.map((recipe, index) => (
+        <div
+          key={index}
+          className="pb-6 border-b border-sage-200 last:border-b-0 last:pb-0"
+        >
+          <h3 className="text-2xl font-bold text-terracotta-600 mb-3">
+            {recipe.name}
+          </h3>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            {recipe.description}
+          </p>
+          {recipe.steps && recipe.steps.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-lg font-semibold text-sage-700 mb-2">
+                Preparation Steps:
+              </h4>
+              <ol className="space-y-2">
+                {recipe.steps.map((step) => (
+                  <li
+                    key={step.step_number}
+                    className="text-gray-700 leading-relaxed"
+                  >
+                    <span className="font-semibold text-terracotta-600">
+                      {step.step_number}.
+                    </span>{" "}
+                    {step.instruction}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

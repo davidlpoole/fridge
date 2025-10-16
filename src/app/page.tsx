@@ -10,6 +10,7 @@ import {
   NUM_RECIPES_STORAGE_KEY,
   FULL_STEPS_STORAGE_KEY,
 } from "@/lib/constants";
+import type { StructuredRecipeResponse } from "@/lib/types";
 import SettingsModal from "@/components/SettingsModal";
 import IngredientInput from "@/components/IngredientInput";
 import IngredientList from "@/components/IngredientList";
@@ -27,7 +28,7 @@ export default function Home() {
     REQUIREMENTS_STORAGE_KEY,
     ""
   );
-  const [recipes, setRecipes] = useState("");
+  const [recipes, setRecipes] = useState<string | StructuredRecipeResponse>("");
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [mode, setMode] = useLocalStorage<string>(MODE_STORAGE_KEY, "default");
@@ -91,7 +92,6 @@ export default function Home() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "text/event-stream",
           "X-API-Key": apiKey,
         },
         body: JSON.stringify({
@@ -112,39 +112,10 @@ export default function Home() {
         return;
       }
 
-      // Check if response is streaming
-      const contentType = response.headers.get("content-type");
-      if (contentType?.includes("text/event-stream")) {
-        // Handle streaming response
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
-
-        if (!reader) {
-          setRecipes("Error: Unable to read streaming response");
-          setLoading(false);
-          return;
-        }
-
-        let accumulatedText = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            setLoading(false);
-            break;
-          }
-
-          const chunk = decoder.decode(value, { stream: true });
-          accumulatedText += chunk;
-          setRecipes(accumulatedText);
-        }
-      } else {
-        // Handle non-streaming response
-        const data = await response.json();
-        setRecipes(data.recipes);
-        setLoading(false);
-      }
+      // Handle structured JSON response
+      const data = await response.json();
+      setRecipes(data.recipes);
+      setLoading(false);
     } catch (error) {
       setRecipes(
         "Error getting recipes: " +
